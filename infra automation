@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+
+  redis:
+    image: redis:latest
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+
+  app:
+    build: ./app
+    ports:
+      - "5000:5000"
+#!/bin/bash
+echo "Starting Services..."
+docker-compose up -d
+echo "All services are running!"
