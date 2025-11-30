@@ -1,0 +1,28 @@
+from flask import Flask, Response
+import random
+
+app = Flask(__name__)
+
+@app.route("/metrics")
+def metrics():
+    value = random.randint(1, 100)
+    return Response(f"sample_value {value}\n", mimetype="text/plain")
+
+app.run(host="0.0.0.0", port=8000)
+
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    ports: [ "9090:9090" ]
+    volumes: [ "./prometheus.yml:/etc/prometheus/prometheus.yml" ]
+
+  grafana:
+    image: grafana/grafana
+    ports: [ "3000:3000" ]
+scrape_configs:
+  - job_name: "sample-app"
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+
